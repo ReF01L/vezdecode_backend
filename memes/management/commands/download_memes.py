@@ -13,7 +13,7 @@ __version__ = '0.0.1'
 from memes.models import Post
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=os.path.join(settings.BASE_DIR, "../../../.env"))
+load_dotenv(dotenv_path=os.path.join(settings.BASE_DIR, ".env"))
 
 
 class Command(BaseCommand):
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         connection = VkApi(login, password)
         connection.auth()
 
-        path_dir = os.path.join(Path(__file__).resolve().parent.parent.parent.parent, '../../../media', 'memes')
+        path_dir = os.path.join(Path(__file__).resolve().parent.parent.parent.parent, 'media', 'memes')
 
         if not os.path.exists(path_dir):
             os.makedirs(path_dir)
