@@ -1,3 +1,8 @@
 from django.db import models
 
-# Create your models here.
+
+class Post(models.Model):
+    photo_id = models.IntegerField()
+    owner_id = models.CharField(max_length=64)
+    likes = models.IntegerField()
+    priority = models.BooleanField(default=False)
