@@ -12,5 +12,8 @@ owner_id=*
 
 `pip install -r requirements.txt`
 
-`python manage.py download_memes start`
+`python manage.py makemigrations`
 
+`python manage.py migrate`
+
+`python manage.py download_memes start`
