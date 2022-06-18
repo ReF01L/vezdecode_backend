@@ -40,8 +40,8 @@ class Command(BaseCommand):
                 print('-' * 15)
 
                 if not Post.objects.filter(photo_id=photo['id'], owner_id=photo['user_id']).exists():
-                    Post.objects.create(photo_id=photo['id'], owner_id=photo['user_id'], likes=photo['likes']['count'])
                     self.download(photo, path_dir)
+                    Post.objects.create(photo_id=photo['id'], owner_id=photo['user_id'], likes=photo['likes']['count'])
 
     def download(self, photo, output):
         r = requests.get(photo['sizes'][0]['url'])

@@ -6,3 +6,4 @@ class Post(models.Model):
     owner_id = models.CharField(max_length=64)
     likes = models.IntegerField()
     priority = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)

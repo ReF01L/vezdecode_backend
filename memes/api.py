@@ -1,11 +1,10 @@
-import random
-
-from django.conf import settings
+import json2table as json2table
 from django.forms import model_to_dict
 from rest_framework import status
-from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView, RetrieveAPIView, get_object_or_404
+from rest_framework.generics import ListAPIView, RetrieveAPIView, get_object_or_404
 from rest_framework.response import Response
 
+from user.models import User
 from .models import Post
 from .serializer import PostSerializer
 
@@ -41,35 +40,28 @@ class LikeAPI(RetrieveAPIView):
     serializer_class = PostSerializer
 
     def get(self, request, *args, **kwargs):
-        if request.query_params.get('photo_id') is None:
-            return Response(data={
-                'error': 'You forgot: photo_id parameter. Your request should look like: HOST/post/like?photo_id=457240792'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        content = settings.CONNECTION.method('photos.get', {'owner_id': settings.OWNER_ID, 'album_id': 283939598, 'extended': 1})
-        photo = [x for x in content['items'] if x['id'] == int(request.query_params['photo_id'])]
-        if photo:
-            photo = photo[0]
-        else:
-            return Response(data={
-                'error': 'Photo is not exists',
-                'photos': [x['id'] for x in content['items']]
-            }, status=status.HTTP_400_BAD_REQUEST)
+        if request.session.get('user'):
+            photo_id = request.query_params.get('photo_id')
+            if photo_id is None:
+                return Response(data={
+                    'error': 'You forgot: photo_id parameter. Your request should look like: HOST/post/like?photo_id=457240792'
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        post = Post.objects.get(photo_id=photo['id'])
-        try:
-            if photo['likes']['user_likes']:
-                settings.CONNECTION.method('likes.delete', {'type': 'photo', 'owner_id': settings.OWNER_ID, 'item_id': photo['id']})
+            post = Post.objects.get(photo_id=photo_id)
+            user = User.objects.get(pk=request.session.get('user')['id'])
+
+            if user.post_liked.filter(user__post_liked=post).exists():
                 post.likes -= 1
-                post.save()
+                user.post_liked.remove(post)
                 message = 'Unliked'
             else:
-                settings.CONNECTION.method('likes.add', {'type': 'photo', 'owner_id': settings.OWNER_ID, 'item_id': photo['id']})
                 post.likes += 1
-                post.save()
+                user.post_liked.add(post)
                 message = 'Liked'
-        except Exception as e:
-            return Response(data={'error': 'VK API down'})
-        return Response(data={'message': message}, status=status.HTTP_200_OK)
+            post.save()
+
+            return Response(data={'message': message}, status=status.HTTP_200_OK)
+        return Response('You should to sigh in first/ (Go to POST/ 127.0.0.1/login)', status=status.HTTP_400_BAD_REQUEST)
 
 
 class PriorityAPI(RetrieveAPIView):
@@ -93,3 +85,17 @@ class PriorityAPI(RetrieveAPIView):
         post.save()
 
         return Response(data={'message': f'Post with id: {photo_id} now is priority'})
+
+
+class DashboardAPI(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def list(self, request, *args, **kwargs):
+        # qwerty = json2html.json2html.convert(Post.objects.order_by('-likes').values()[:5])
+        posts = Post.objects.all()
+        return Response(data={
+            'best': posts.order_by('-likes').values('id', 'photo_id', 'likes', 'updated')[:5],
+            'last_interaction': posts.order_by('-updated').values('id', 'photo_id', 'likes', 'updated')[:5],
+            'count': len(posts.values())
+        }, status=status.HTTP_200_OK)
