@@ -2,9 +2,8 @@
 # Task 1
 Необходимо создать .env файл в корневой директории
 И внести следующие поля:
-login=*
-password=*
 owner_id=*
+album_id=*
 
 `python -m venv venv`
 
@@ -22,6 +21,14 @@ owner_id=*
 Необходимо дополнительно запустить сервер:
 
 `python manage.py runserver`
+
+Необходимо сперва авторизоваться. Для этого используйте следующие запросы:
+
+POST/ `127.0.0.1:8000/register`, `body={login=*, password=*}` - Для регистрации аккаунта
+
+POST/ `127.0.0.1:8000/auth`, `body={login=*, password=*}` - Для авторизации аккаунта
+
+GET/ `127.0.0.1:8000/logout` - Для выхода
 
 GET/
 
@@ -51,10 +58,32 @@ GET/
 Вернет все добавленные посты, при этом если есть фотография, установленная в приоритет - она будет в топе
 
 # Task 4
-Необходимо изменить переменные в .env
-login=*
-password=*
-owner_id=*
-album_id=*
-
 Далее запустить `python manage.py download_memes start` и ожидать, пока не закончится заполнение БД.
+
+# Task 5
+Необходимо иметь предустановленный nodejs
+
+`cd dashboadrd_client`
+
+`npm install`
+
+`npm run serve`
+
+
+Необходимо сперва авторизоваться. Для этого используйте следующие запросы:
+
+POST/ `127.0.0.1:8000/register`, `body={login=*, password=*}` - Для регистрации аккаунта
+
+POST/ `127.0.0.1:8000/auth`, `body={login=*, password=*}` - Для авторизации аккаунта
+
+GET/ `127.0.0.1:8000/logout` - Для выхода
+
+Для получение dashboard'a, необходимо зайти под логином 'admin'
+
+POST/ `127.0.0.1:8000/register`, `body={login=admin, password=admin}`
+
+POST/ `127.0.0.1:8000/auth`, `body={login=admin, password=admin}`
+
+После этого:
+
+Got to - `127.0.0.1:8080/` in your browser
