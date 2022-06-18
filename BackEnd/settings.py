@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from vk_api import VkApi
 

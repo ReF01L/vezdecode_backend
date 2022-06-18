@@ -21,7 +21,7 @@ class PostListAPI(ListAPIView):
         post = Post.objects.get(priority=True)
         post_likes = post.likes
 
-        first_part = Post.objects.filter(likes__lt=post_likes).order_by('likes')
+        first_part = Post.objects.filter(likes__lt=post_likes).order_by('-likes')
         last_part = Post.objects.all().exclude(likes__lt=post_likes).order_by('?')
 
         return Response(data=[model_to_dict(post)] + list(first_part.values()) + list(last_part.values()), status=status.HTTP_200_OK)

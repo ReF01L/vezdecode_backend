@@ -31,8 +31,8 @@ class Command(BaseCommand):
         if not os.path.exists(path_dir):
             os.makedirs(path_dir)
 
-        for i in range(len(self.get_photos(connection, 283939598, os.environ.get('owner_id', '-197700721'), offset=0)['items']) // 50 + 1):
-            response = self.get_photos(connection, 283939598, os.environ.get('owner_id', '-197700721'), offset=i * 50)
+        for i in range(len(self.get_photos(connection, 196318016, os.environ.get('owner_id', '-197700721'), offset=0)['items']) // 50 + 1):
+            response = self.get_photos(connection, 196318016, os.environ.get('owner_id', '-197700721'), offset=i * 50)
             for photo in response['items']:
                 creator = connection.method('users.get', {'user_ids': photo['user_id']})[0]
                 print(f'Like count: {photo["likes"]["count"]}')
