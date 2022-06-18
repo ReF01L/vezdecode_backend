@@ -24,9 +24,13 @@ owner_id=*
 `python manage.py runserver`
 
 GET/
+
 `127.0.01:8000/post/like?photo_id={photo_id}`, photo_id = 457240793
+
 Лайкнет или анлайкнет выбранный пост
 
 GET/
+
 `127.0.0.1:8000/posts`
+
 Вернет все добавленные посты
