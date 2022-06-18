@@ -1,4 +1,3 @@
-import json2table as json2table
 from django.forms import model_to_dict
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, get_object_or_404
@@ -92,8 +91,7 @@ class DashboardAPI(ListAPIView):
     serializer_class = PostSerializer
 
     def list(self, request, *args, **kwargs):
-        # qwerty = json2html.json2html.convert(Post.objects.order_by('-likes').values()[:5])
-        posts = Post.objects.all()
+       posts = Post.objects.all()
         return Response(data={
             'best': posts.order_by('-likes').values('id', 'photo_id', 'likes', 'updated')[:5],
             'last_interaction': posts.order_by('-updated').values('id', 'photo_id', 'likes', 'updated')[:5],

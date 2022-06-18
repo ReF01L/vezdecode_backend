@@ -18,8 +18,8 @@ class SignInAPI(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         if request.session.get('user') is None:
-            user = get_object_or_404(User, login=request.POST['login'])
-            if user.password == request.POST['password']:
+            user = get_object_or_404(User, login=request.data['login'])
+            if user.password == request.data['password']:
                 request.session['user'] = model_to_dict(user)
                 return Response('Accepted', status=status.HTTP_200_OK)
         return Response('Canceled', status=status.HTTP_400_BAD_REQUEST)
