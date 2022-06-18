@@ -69,21 +69,4 @@ GET/
 
 `npm run serve`
 
-
-Необходимо сперва авторизоваться. Для этого используйте следующие запросы:
-
-POST/ `127.0.0.1:8000/register`, `body={login=*, password=*}` - Для регистрации аккаунта
-
-POST/ `127.0.0.1:8000/auth`, `body={login=*, password=*}` - Для авторизации аккаунта
-
-GET/ `127.0.0.1:8000/logout` - Для выхода
-
-Для получение dashboard'a, необходимо зайти под логином 'admin'
-
-POST/ `127.0.0.1:8000/register`, `body={login=admin, password=admin}`
-
-POST/ `127.0.0.1:8000/auth`, `body={login=admin, password=admin}`
-
-После этого:
-
 Got to - `127.0.0.1:8080/` in your browser
