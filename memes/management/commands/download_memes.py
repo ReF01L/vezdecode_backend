@@ -21,8 +21,8 @@ class Command(BaseCommand):
         parser.add_argument('start', nargs='+', type=None)
 
     def handle(self, *args, **options):
-        login = os.environ.get('login')
-        password = os.environ.get('password')
+        login = os.environ.get('login', '89940128262')
+        password = os.environ.get('password', '12344321qWWs')
         connection = VkApi(login, password)
         connection.auth()
 
@@ -31,8 +31,8 @@ class Command(BaseCommand):
         if not os.path.exists(path_dir):
             os.makedirs(path_dir)
 
-        for i in range(len(self.get_photos(connection, 283939598, os.environ.get('owner_id'), offset=0)['items']) // 50 + 1):
-            response = self.get_photos(connection, 283939598, os.environ.get('owner_id'), offset=i * 50)
+        for i in range(len(self.get_photos(connection, 283939598, os.environ.get('owner_id', '-197700721'), offset=0)['items']) // 50 + 1):
+            response = self.get_photos(connection, 283939598, os.environ.get('owner_id', '-197700721'), offset=i * 50)
             for photo in response['items']:
                 creator = connection.method('users.get', {'user_ids': photo['user_id']})[0]
                 print(f'Like count: {photo["likes"]["count"]}')
