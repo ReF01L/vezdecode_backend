@@ -17,14 +17,23 @@ class PostListAPI(ListAPIView):
     def list(self, request, *args, **kwargs):
         priority_post = Post.objects.filter(priority=True).first()
         if priority_post is None:
-            return Response(data=Post.objects.order_by('id').values(), status=status.HTTP_200_OK)
+            result = Post.objects.order_by('id').values()
+            return Response(data={
+                'photos': result,
+                'count': len(result)
+            }, status=status.HTTP_200_OK)
         post = Post.objects.get(priority=True)
         post_likes = post.likes
 
         first_part = Post.objects.filter(likes__lt=post_likes).order_by('-likes')
         last_part = Post.objects.all().exclude(likes__lt=post_likes).order_by('?')
 
-        return Response(data=[model_to_dict(post)] + list(first_part.values()) + list(last_part.values()), status=status.HTTP_200_OK)
+        result = [model_to_dict(post)] + list(first_part.values()) + list(last_part.values())
+
+        return Response(data={
+            'photos': result,
+            'count': len(result)
+        }, status=status.HTTP_200_OK)
 
 
 class LikeAPI(RetrieveAPIView):
@@ -84,4 +93,3 @@ class PriorityAPI(RetrieveAPIView):
         post.save()
 
         return Response(data={'message': f'Post with id: {photo_id} now is priority'})
-
