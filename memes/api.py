@@ -97,10 +97,13 @@ class DashboardAPI(ListAPIView):
     serializer_class = PostSerializer
 
     def list(self, request, *args, **kwargs):
-        posts = Post.objects.all()
+        if request.query_params.get('user_id') == '1':
+            posts = Post.objects.all()
 
-        return Response(data={
-            'best': posts.order_by('-likes').values('id', 'photo_id', 'likes', 'updated')[:5],
-            'last_interaction': posts.order_by('-updated').values('id', 'photo_id', 'likes', 'updated')[:5],
-            'count': len(posts.values())
-        }, status=status.HTTP_200_OK)
+            return Response(data={
+                'best': posts.order_by('-likes').values('id', 'photo_id', 'likes', 'updated')[:5],
+                'last_interaction': posts.order_by('-updated').values('id', 'photo_id', 'likes', 'updated')[:5],
+                'count': len(posts.values())
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response(data={'message': 'You are not '})

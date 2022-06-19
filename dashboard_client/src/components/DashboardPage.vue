@@ -8,7 +8,11 @@ import axios from "axios";
 export default {
     name: 'HelloWorld',
     mounted() {
-        axios.get('http://127.0.0.1:8000/dashboard')
+        axios.get('http://127.0.0.1:8000/dashboard', {
+            params: {
+                user_id: 1
+            }
+        })
             .then(res => {
                 let elem = document.getElementById('hello')
 
@@ -23,7 +27,7 @@ export default {
                 elem.appendChild(this.buildHtmlTable(res.data.last_interaction))
             })
             .catch(err => {
-                console.log(err)
+                console.log(err.response)
             })
     },
     methods: {
