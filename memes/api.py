@@ -16,6 +16,7 @@ class PostListAPI(ListAPIView):
         priority_post = Post.objects.filter(priority=True).first()
         if priority_post is None:
             result = Post.objects.order_by('id').values()
+
             return Response(data={
                 'photos': result,
                 'count': len(result)
@@ -34,33 +35,38 @@ class PostListAPI(ListAPIView):
         }, status=status.HTTP_200_OK)
 
 
+class PostRetrieveAPI(RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
 class LikeAPI(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
     def get(self, request, *args, **kwargs):
-        if request.session.get('user'):
-            photo_id = request.query_params.get('photo_id')
-            if photo_id is None:
-                return Response(data={
-                    'error': 'You forgot: photo_id parameter. Your request should look like: HOST/post/like?photo_id=457240792'
-                }, status=status.HTTP_400_BAD_REQUEST)
+        # if request.session.get('user'):
+        photo_id = request.query_params.get('photo_id')
+        if photo_id is None:
+            return Response(data={
+                'error': 'You forgot: photo_id parameter. Your request should look like: HOST/post/like?photo_id=457240792'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-            post = Post.objects.get(photo_id=photo_id)
-            user = User.objects.get(pk=request.session.get('user')['id'])
+        post = Post.objects.get(photo_id=photo_id)
+        user = User.objects.get(pk=request.query_params.get('user_id'))
 
-            if user.post_liked.filter(user__post_liked=post).exists():
-                post.likes -= 1
-                user.post_liked.remove(post)
-                message = 'Unliked'
-            else:
-                post.likes += 1
-                user.post_liked.add(post)
-                message = 'Liked'
-            post.save()
+        if user.post_liked.filter(user__post_liked=post).exists():
+            post.likes -= 1
+            user.post_liked.remove(post)
+            message = 'Unliked'
+        else:
+            post.likes += 1
+            user.post_liked.add(post)
+            message = 'Liked'
+        post.save()
 
-            return Response(data={'message': message}, status=status.HTTP_200_OK)
-        return Response(data={'err': 'You should to sigh in first/ (Go to POST/ 127.0.0.1/login)'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data={'message': message}, status=status.HTTP_200_OK)
+        # return Response(data={'err': 'You should to sigh in first/ (Go to POST/ 127.0.0.1/login)'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PriorityAPI(RetrieveAPIView):
@@ -92,6 +98,7 @@ class DashboardAPI(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         posts = Post.objects.all()
+
         return Response(data={
             'best': posts.order_by('-likes').values('id', 'photo_id', 'likes', 'updated')[:5],
             'last_interaction': posts.order_by('-updated').values('id', 'photo_id', 'likes', 'updated')[:5],
