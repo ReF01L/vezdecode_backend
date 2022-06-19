@@ -21,8 +21,8 @@ class SignInAPI(CreateAPIView):
             user = get_object_or_404(User, login=request.data['login'])
             if user.password == request.data['password']:
                 request.session['user'] = model_to_dict(user)
-                return Response('Accepted', status=status.HTTP_200_OK)
-        return Response('Canceled', status=status.HTTP_400_BAD_REQUEST)
+                return Response(data={'message': 'Accepted'}, status=status.HTTP_200_OK)
+        return Response(data={'message': 'Canceled'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutAPI(ListAPIView):
@@ -32,5 +32,5 @@ class LogoutAPI(ListAPIView):
     def get(self, request, *args, **kwargs):
         if request.session.get('user') is not None:
             del request.session['user']
-            return Response('Logout', status=status.HTTP_200_OK)
-        return Response('You are already logout', status=status.HTTP_200_OK)
+            return Response(data={'message': 'Logout'}, status=status.HTTP_200_OK)
+        return Response(data={'message': 'You are already logout'}, status=status.HTTP_200_OK)

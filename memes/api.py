@@ -60,7 +60,7 @@ class LikeAPI(RetrieveAPIView):
             post.save()
 
             return Response(data={'message': message}, status=status.HTTP_200_OK)
-        return Response('You should to sigh in first/ (Go to POST/ 127.0.0.1/login)', status=status.HTTP_400_BAD_REQUEST)
+        return Response(data={'err': 'You should to sigh in first/ (Go to POST/ 127.0.0.1/login)'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PriorityAPI(RetrieveAPIView):
@@ -91,7 +91,7 @@ class DashboardAPI(ListAPIView):
     serializer_class = PostSerializer
 
     def list(self, request, *args, **kwargs):
-       posts = Post.objects.all()
+        posts = Post.objects.all()
         return Response(data={
             'best': posts.order_by('-likes').values('id', 'photo_id', 'likes', 'updated')[:5],
             'last_interaction': posts.order_by('-updated').values('id', 'photo_id', 'likes', 'updated')[:5],
